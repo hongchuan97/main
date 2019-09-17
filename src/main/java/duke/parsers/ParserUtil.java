@@ -73,6 +73,12 @@ public class ParserUtil {
         }
     }
 
+    /**
+     * Creates a recurring task from a user input.
+     *
+     * @param userInput The userInput read by the user interface.
+     * @return The Recurring task
+     */
     public static RecurringTask createRecurringTask(String userInput) throws DukeException {
         String[] eventDetails = userInput.substring("repeat".length()).strip().split("/at");
         String[] dateDetails = eventDetails[1].split("/every");
