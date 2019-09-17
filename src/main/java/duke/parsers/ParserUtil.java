@@ -73,7 +73,7 @@ public class ParserUtil {
         }
     }
 
-    protected static RecurringTask createRecurringTask(String userInput) throws DukeException {
+    public static RecurringTask createRecurringTask(String userInput) throws DukeException {
         String[] eventDetails = userInput.substring("repeat".length()).strip().split("/at");
         String[] dateDetails = eventDetails[1].split("/every");
         if (dateDetails.length != 2 || dateDetails[1] == null) {
