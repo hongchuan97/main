@@ -39,7 +39,7 @@ class SnoozeCommandTest {
 
         storage.read();
 
-        SnoozeCommand snoozeCommand = new SnoozeCommand(0, date);
+        SnoozeCommand snoozeCommand = new SnoozeCommand(1, date);
         snoozeCommand.execute(ui, storage);
 
         assertEquals(ui.getResponse(),message + task);
