@@ -64,7 +64,7 @@ public class Duke {
      */
     public void parseRequest(String input) throws DukeException {
         try {
-            Command command = Parser.parse(input);
+            Command command = Parser.parse(input.toLowerCase());
             command.execute(ui, storage);
             dukeMessage = ui.getResponse();
             if (command instanceof ExitCommand) {

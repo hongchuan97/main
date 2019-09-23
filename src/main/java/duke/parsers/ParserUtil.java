@@ -100,7 +100,7 @@ public class ParserUtil {
      * @return The new DoWithin object.
      */
     protected static DoWithin createWithin(String userInput) throws DukeException {
-        String[] withinDetails = userInput.substring("within".length()).strip().split("between|and");
+        String[] withinDetails = userInput.substring("within".length()).strip().split("/between|/and");
         if (withinDetails.length != 3 || withinDetails[1] == null || withinDetails[2] == null) {
             throw new DukeException(MessageUtil.INVALID_FORMAT);
         }

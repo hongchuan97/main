@@ -6,6 +6,7 @@ import duke.commands.DeleteCommand;
 import duke.commands.ExitCommand;
 import duke.commands.FetchCommand;
 import duke.commands.FindCommand;
+import duke.commands.HelpCommand;
 import duke.commands.ListCommand;
 import duke.commands.MarkDoneCommand;
 import duke.commands.SnoozeCommand;
@@ -56,6 +57,8 @@ public class Parser {
             return new ReminderCommand();
         case "repeat":
             return new AddCommand(ParserUtil.createRecurringTask(userInput));
+        case "help":
+            return new HelpCommand();
         default:
             throw new DukeException(MessageUtil.UNKNOWN_COMMAND);
         }
