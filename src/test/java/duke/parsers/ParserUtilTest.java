@@ -33,7 +33,7 @@ class ParserUtilTest {
 
     @Test
     void createWithin() throws Exception {
-        assertTrue(ParserUtil.createWithin("within jogging between 1200 and 1300") instanceof DoWithin);
+        assertTrue(ParserUtil.createWithin("within jogging /between 1200 /and 1300") instanceof DoWithin);
     }
 
     @Test
