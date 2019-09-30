@@ -2,10 +2,8 @@ package duke.commands;
 
 import duke.commons.DukeException;
 import duke.commons.MessageUtil;
-import duke.parsers.Parser;
 import duke.storage.Storage;
 import duke.tasks.Task;
-import duke.tasks.TaskWithDates;
 import duke.ui.Ui;
 
 /**
@@ -33,18 +31,7 @@ public class DeleteCommand extends Command {
     public void execute(Ui ui, Storage storage) throws DukeException {
         try {
             Task task = storage.getTasks().remove(index);
-            if (task instanceof TaskWithDates) {
-                int indexDate = 0;
-                for (Task tasksWithDate: storage.getTasksWithDate()) {
-                    if (task == tasksWithDate) {
-                        storage.getTasksWithDate().remove(indexDate);
-                        break;
-                    } else {
-                        indexDate++;
-                    }
-                }
-            }
-            ui.setResponse(ui.getDelete(task));
+            ui.showDelete(task);
         } catch (IndexOutOfBoundsException e) {
             throw new DukeException(MessageUtil.OUT_OF_BOUNDS);
         }

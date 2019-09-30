@@ -1,6 +1,5 @@
 package duke.parsers;
 
-import duke.Duke;
 import duke.commons.DukeDateTimeParseException;
 import duke.commons.DukeException;
 import duke.commons.MessageUtil;
@@ -8,6 +7,7 @@ import duke.tasks.Deadline;
 import duke.tasks.DoWithin;
 import duke.tasks.Event;
 import duke.tasks.RecurringTask;
+import duke.tasks.Task;
 import duke.tasks.Todo;
 
 import java.time.LocalDateTime;
@@ -73,26 +73,6 @@ public class ParserUtil {
         }
     }
 
-    protected static RecurringTask createRecurringTask(String userInput) throws DukeException {
-        String[] eventDetails = userInput.substring("repeat".length()).strip().split("/at");
-        String[] dateDetails = eventDetails[1].split("/every");
-        if (dateDetails.length != 2 || dateDetails[1] == null) {
-            throw new DukeException(MessageUtil.INVALID_FORMAT);
-        }
-        if (eventDetails[0].strip().isEmpty()) {
-            throw new DukeException(MessageUtil.EMPTY_DESCRIPTION);
-        }
-        try {
-            return new RecurringTask(eventDetails[0].strip(), ParserTimeUtil.parseStringToDate(dateDetails[0].strip()),
-                    Integer.parseInt(dateDetails[1].strip()));
-        } catch (DukeDateTimeParseException e) {
-            return new RecurringTask(eventDetails[0].strip(), dateDetails[0].strip(),
-                    Integer.parseInt(dateDetails[1].strip()));
-        }
-
-
-    }
-
     /**
      * Parses the userInput and return a new DoWithin constructed from it.
      *
@@ -100,7 +80,7 @@ public class ParserUtil {
      * @return The new DoWithin object.
      */
     protected static DoWithin createWithin(String userInput) throws DukeException {
-        String[] withinDetails = userInput.substring("within".length()).strip().split("/between|/and");
+        String[] withinDetails = userInput.substring("within".length()).strip().split("between|and");
         if (withinDetails.length != 3 || withinDetails[1] == null || withinDetails[2] == null) {
             throw new DukeException(MessageUtil.INVALID_FORMAT);
         }
@@ -110,6 +90,29 @@ public class ParserUtil {
         LocalDateTime start = ParserTimeUtil.parseStringToDate(withinDetails[1].strip());
         LocalDateTime end = ParserTimeUtil.parseStringToDate(withinDetails[2].strip());
         return new DoWithin(withinDetails[0].strip(), start, end);
+    }
+
+    /**
+     * Parses the user input and creates a recurring task.
+     *
+     * @param userInput The userInput read by the user interface.
+     * @return The new recurring task.
+     */
+    protected static Task createRecurringTask(String userInput) throws DukeException {
+        String[] taskDetails = userInput.substring("repeat".length()).strip().split("/at");
+        try {
+            String[] dateDetails = taskDetails[1].split("/every");
+            if (dateDetails.length != 2 || dateDetails[1] == null) {
+                throw new DukeException(MessageUtil.INVALID_FORMAT);
+            }
+            if (taskDetails[0].strip().isEmpty()) {
+                throw new DukeException(MessageUtil.EMPTY_DESCRIPTION);
+            }
+            return new RecurringTask(taskDetails[0].strip(), ParserTimeUtil.parseStringToDate(dateDetails[0].strip()),
+                    getIndex(dateDetails[1].strip()) + 1);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new DukeException(MessageUtil.INVALID_FORMAT);
+        }
     }
 
     /**
@@ -128,32 +131,36 @@ public class ParserUtil {
     }
 
     /**
-     * Parses the userInput and return an index to snooze.
+     * Parses the userInput and return an index extracted from it safely.
      *
      * @param userInput The userInput read by the user interface.
      * @return The index.
      */
-    static int getIndexUpdate(String userInput) throws DukeException {
+    protected static int getSafeIndex(String userInput) throws DukeException {
         try {
-            int index =  Integer.parseInt(userInput.strip().split(" ")[1]);
-            return --index;
+            String index = userInput.split(" ")[1].strip();
+            return Integer.parseInt(index) - 1;
         } catch (ArrayIndexOutOfBoundsException e) {
+            throw new DukeException(MessageUtil.OUT_OF_BOUNDS);
+        } catch (NumberFormatException e) {
             throw new DukeException(MessageUtil.INVALID_FORMAT);
         }
     }
 
     /**
-     * Parses the userInput and return an date to snooze/delay to.
+     * Parses the userInput and return an date to reschedule to.
      *
      * @param userInput The userInput read by the user interface.
-     * @return The index.
+     * @return The date.
      */
-    public static LocalDateTime getDateUpdate(String userInput) throws DukeException {
+    protected static LocalDateTime getScheduleDate(String userInput) throws DukeException {
         try {
             return ParserTimeUtil.parseStringToDate(
-                    userInput.substring("snooze ".length() + 2).strip().split("/to")[1].strip());
+                    userInput.substring("reschedule".length()).strip().split("/to")[1].strip());
         } catch (DukeDateTimeParseException e) {
             throw new DukeException(MessageUtil.INVALID_FORMAT);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new DukeException(MessageUtil.EMPTY_DESCRIPTION);
         }
     }
 }

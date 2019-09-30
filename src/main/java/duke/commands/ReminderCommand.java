@@ -32,17 +32,18 @@ public class ReminderCommand extends Command {
     public void execute(Ui ui, Storage storage) throws DukeException {
         SortedList<Task> tasks = storage.getTasks().getChronoList();
         for (Task t : tasks) {
-            LocalDate date = ((TaskWithDates) t).getStartDate().toLocalDate();
-            LocalDate now = LocalDate.now();
             if (t.isDone()) {
                 continue;
             }
+            LocalDate date = ((TaskWithDates) t).getStartDate().toLocalDate();
+            LocalDate now = LocalDate.now();
             if (date.compareTo(now) < 0) {
                 expiredTask.add(t);
             } else {
                 upcomingTask.add(t);
             }
         }
-        ui.setResponse(ui.getList(upcomingTask));
+        ui.showList(expiredTask);
+        ui.showList(upcomingTask);
     }
 }

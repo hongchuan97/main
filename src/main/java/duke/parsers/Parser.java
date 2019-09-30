@@ -1,16 +1,17 @@
 package duke.parsers;
 
+import duke.commands.DeleteCommand;
+import duke.commands.FindCommand;
 import duke.commands.AddCommand;
 import duke.commands.Command;
-import duke.commands.DeleteCommand;
 import duke.commands.ExitCommand;
-import duke.commands.FetchCommand;
-import duke.commands.FindCommand;
 import duke.commands.HelpCommand;
 import duke.commands.ListCommand;
 import duke.commands.MarkDoneCommand;
-import duke.commands.SnoozeCommand;
 import duke.commands.ReminderCommand;
+import duke.commands.FreeTimeCommand;
+import duke.commands.RescheduleCommand;
+import duke.commands.ViewScheduleCommand;
 import duke.commons.DukeException;
 import duke.commons.MessageUtil;
 
@@ -19,7 +20,6 @@ import duke.commons.MessageUtil;
  * returns Command objects.
  */
 public class Parser {
-
     /**
      * Parses the userInput and return a Command object.
      *
@@ -29,7 +29,7 @@ public class Parser {
      */
     public static Command parse(String userInput) throws DukeException {
         String commandWord = getCommandWord(userInput);
-        switch (commandWord) {
+        switch (commandWord.toLowerCase()) {
         case "bye":
             return new ExitCommand();
         case "todo":
@@ -38,8 +38,6 @@ public class Parser {
             return new AddCommand(ParserUtil.createDeadline(userInput));
         case "event":
             return new AddCommand(ParserUtil.createEvent(userInput));
-        case "within":
-            return new AddCommand(ParserUtil.createWithin(userInput));
         case "list":
             return new ListCommand();
         case "done":
@@ -48,13 +46,16 @@ public class Parser {
             return new DeleteCommand(ParserUtil.getIndex(userInput));
         case "find":
             return new FindCommand(getWord(userInput));
-        case "snooze":
-            return new SnoozeCommand(ParserUtil.getIndexUpdate(userInput), ParserUtil.getDateUpdate(userInput));
-        case "fetch":
-            String[] deadlineDetails = userInput.split(" ", 2);
-            return new FetchCommand(ParserTimeUtil.parseStringToDate(deadlineDetails[1].strip()));
         case "reminder":
             return new ReminderCommand();
+        case "findtime":
+            return new FreeTimeCommand(ParserUtil.getIndex(userInput));
+        case "fetch":
+            return new ViewScheduleCommand(ParserTimeUtil.parseStringToDate(getWord(userInput)));
+        case "within":
+            return new AddCommand(ParserUtil.createWithin(userInput));
+        case "reschedule":
+            return new RescheduleCommand(ParserUtil.getSafeIndex(userInput), ParserUtil.getScheduleDate(userInput));
         case "repeat":
             return new AddCommand(ParserUtil.createRecurringTask(userInput));
         case "help":
@@ -62,7 +63,6 @@ public class Parser {
         default:
             throw new DukeException(MessageUtil.UNKNOWN_COMMAND);
         }
-
     }
 
     /**
@@ -83,7 +83,7 @@ public class Parser {
      */
     private static String getWord(String userInput) throws DukeException {
         try {
-            return userInput.strip().split(" ")[1];
+            return userInput.strip().split(" ", 2)[1];
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new DukeException(MessageUtil.INVALID_FORMAT);
         }

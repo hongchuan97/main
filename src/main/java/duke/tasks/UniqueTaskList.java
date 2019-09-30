@@ -2,6 +2,7 @@ package duke.tasks;
 
 import duke.commons.DukeException;
 import duke.commons.DuplicateTaskException;
+import duke.commons.MessageUtil;
 import duke.commons.TaskNotFoundException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,6 +28,10 @@ public class UniqueTaskList implements Iterable<Task> {
         return internalList.get(index);
     }
 
+    public int size() {
+        return internalList.size();
+    }
+
     /**
      * Returns true if the list contains an equivalent Task as the given argument.
      */
@@ -41,8 +46,8 @@ public class UniqueTaskList implements Iterable<Task> {
     public void add(Task toAdd) throws DukeException {
         if (contains(toAdd)) {
             throw new DuplicateTaskException();
-        } else if (isClash(toAdd)) {
-            throw new DukeException("Scheduling anomoly!");
+        } else if (hasAnomaly(toAdd)) {
+            throw new DukeException(MessageUtil.ANOMALY_FOUND);
         }
         internalList.add(toAdd);
     }
@@ -50,7 +55,7 @@ public class UniqueTaskList implements Iterable<Task> {
     /**
      * Checks if task clashes with other tasks.
      */
-    private boolean isClash(Task toAdd) {
+    private boolean hasAnomaly(Task toAdd) {
         if (toAdd instanceof TaskWithDates) {
             LocalDateTime dateTime = ((TaskWithDates) toAdd).getStartDate();
             if (dateTime != null) {

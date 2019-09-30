@@ -1,11 +1,8 @@
 package duke.commands;
 
 import duke.commons.DukeException;
-import duke.parsers.Parser;
 import duke.storage.Storage;
-import duke.tasks.Deadline;
 import duke.tasks.Task;
-import duke.tasks.TaskWithDates;
 import duke.ui.Ui;
 
 /**
@@ -32,11 +29,7 @@ public class AddCommand extends Command {
     @Override
     public void execute(Ui ui, Storage storage) throws DukeException {
         storage.getTasks().add(task);
-        if (task instanceof TaskWithDates) {
-            storage.getTasksWithDate().add(task);
-        }
-        ui.setResponse(ui.getTaskDesc(task));
+        ui.showAdd(task);
         storage.write();
     }
-
 }

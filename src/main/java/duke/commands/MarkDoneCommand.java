@@ -2,7 +2,6 @@ package duke.commands;
 
 import duke.commons.DukeException;
 import duke.commons.MessageUtil;
-import duke.parsers.Parser;
 import duke.storage.Storage;
 import duke.tasks.Task;
 import duke.ui.Ui;
@@ -33,7 +32,7 @@ public class MarkDoneCommand extends Command {
         try {
             Task task = storage.getTasks().get(index);
             task.setDone(true);
-            ui.setResponse(ui.getShowMarkDone(task));
+            ui.showMarkDone(task);
         } catch (IndexOutOfBoundsException e) {
             throw new DukeException(MessageUtil.OUT_OF_BOUNDS);
         }

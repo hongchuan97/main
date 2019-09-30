@@ -1,7 +1,6 @@
 package duke.commands;
 
 import duke.commons.DukeException;
-import duke.parsers.Parser;
 import duke.storage.Storage;
 import duke.tasks.Task;
 import duke.tasks.UniqueTaskList;
@@ -37,6 +36,6 @@ public class FindCommand extends Command {
                 result.add(task);
             }
         }
-        ui.setResponse(ui.getList(result));
+        ui.showList(result);
     }
 }

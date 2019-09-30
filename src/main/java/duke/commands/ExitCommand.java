@@ -1,9 +1,7 @@
 package duke.commands;
 
-import duke.parsers.Parser;
 import duke.storage.Storage;
 import duke.ui.Ui;
-import javafx.application.Platform;
 
 /**
  * Class representing a command to exit duke.Duke.
@@ -17,6 +15,6 @@ public class ExitCommand extends Command {
      */
     @Override
     public void execute(Ui ui, Storage storage) {
-        ui.setResponse(ui.getByeMessage());
+        ui.showBye();
     }
 }

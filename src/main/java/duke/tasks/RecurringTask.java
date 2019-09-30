@@ -1,10 +1,8 @@
 package duke.tasks;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
 public class RecurringTask extends TaskWithDates {
-    private LocalDateTime date;
     private int repeatInterval;
 
     /**
@@ -13,18 +11,6 @@ public class RecurringTask extends TaskWithDates {
      * @param description A description of this task.
      */
     public RecurringTask(String description, LocalDateTime date, int repeatInterval) {
-        super(description, date);
-        this.repeatInterval = repeatInterval;
-        this.date = date;
-        updateRecurringTask();
-    }
-
-    /**
-     * Initializes a recurring task not yet done with the given description.
-     *
-     * @param description A description of this event.
-     */
-    public RecurringTask(String description, String date, int repeatInterval) {
         super(description, date);
         this.repeatInterval = repeatInterval;
         updateRecurringTask();
@@ -39,9 +25,9 @@ public class RecurringTask extends TaskWithDates {
     /**
      * Update the date if necessary.
      */
-    public void updateRecurringTask() {
-        if (LocalDateTime.now().isAfter(this.getStartDate())) {
-            this.startDate = this.startDate.plusDays(repeatInterval);
+    private void updateRecurringTask() {
+        while (LocalDateTime.now().isAfter(getStartDate())) {
+            setStartDate(getStartDate().plusDays(repeatInterval));
         }
     }
 
