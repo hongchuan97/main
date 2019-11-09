@@ -10,6 +10,8 @@ import sgtravel.model.transports.BusService;
 
 import java.util.HashMap;
 
+import static sgtravel.commons.Messages.BUS_ROUTE_NOT_FOUND;
+
 /**
  * Retrieves the bus route of a given bus.
  */
@@ -29,9 +31,11 @@ public class GetBusRouteCommand extends Command {
     @Override
     public CommandResultText execute(Model model) throws NoSuchBusServiceException {
         try {
-            assert (this.bus.matches("-?\\d+(\\.\\d+)?"));
             HashMap<String, BusService> busMap = model.getMap().getBusMap();
             BusService bus = busMap.get(this.bus);
+            if (bus == null) {
+                return new CommandResultText(BUS_ROUTE_NOT_FOUND);
+            }
             String result = "";
 
             HashMap<String, BusStop> allBus = model.getBusStops();
@@ -44,7 +48,7 @@ public class GetBusRouteCommand extends Command {
 
             return new CommandResultText(Messages.BUS_ROUTE_STARTER + result);
         } catch (NullPointerException e) {
-            return new CommandResultText(Messages.BUS_ROUTE_NOT_FOUND);
+            return new CommandResultText(BUS_ROUTE_NOT_FOUND);
         }
     }
 }
